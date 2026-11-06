@@ -5,8 +5,6 @@ const DB_URL = "https://pokememory-64550-default-rtdb.europe-west1.firebasedatab
 const registro = document.getElementById("registro");
 let userId = sessionStorage.getItem("user");
 
-console.log(userId);
-
 if (userId) {
     registro.innerHTML = `
         <div class="game-page">
@@ -20,7 +18,9 @@ if (userId) {
         </div>
         <div id="izquierda">
           <div id="seccion-logout">
-            <button type="submit">LOGOUT</button>
+            <form id="logout-form">
+                <button id="logout-btn" type="click">LOGOUT</button>
+            </form>
           </div>
           <div id="seccion-formulario" class="seccion">
             <div class="instrucciones">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus harum, saepe ex aperiam voluptatem possimus laudantium exercitationem, asperiores quisquam nobis tempore doloremque vel.</div>
@@ -28,6 +28,17 @@ if (userId) {
         </div>
       </div>
     `;
+    
+    const form = document.getElementById("logout-form");
+
+    form.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (event.target.id === "logout-btn") {
+            sessionStorage.removeItem("user");
+            window.location.reload();
+        }
+    })
 } else {
     const form = document.getElementById("user-form");
 
