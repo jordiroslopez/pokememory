@@ -2,81 +2,88 @@ import './style.css'
 
 const DB_URL = "https://pokememory-64550-default-rtdb.europe-west1.firebasedatabase.app";
 
-const form = document.getElementById("user-form");
+const registro = document.getElementById("registro");
+let userId = sessionStorage.getItem("user");
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+console.log(userId);
 
-    const formData = new FormData(form);
+if (userId) {
+    registro.innerHTML = `
+        <h1>Bienvenido a PokeMemory</h1>
+    `;
+} else {
+    const form = document.getElementById("user-form");
 
-    const username = formData.get("username");
-    const email = formData.get("email");
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-    try {
-        // COMPROBAR SI EXISTE EL EMAIL
+        const formData = new FormData(form);
 
-        const response = await fetch(
-            `${DB_URL}/usuarios.json?orderBy="email"&equalTo="${encodeURIComponent(email)}"`
-        );
+        const username = formData.get("username");
+        const email = formData.get("email");
 
-        if (!response.ok) {
-            throw new Error("Error consultando Firebase: " + response.status);
-        }
+        try {
+            // COMPROBAR SI EXISTE EL EMAIL
 
-        const usuarios = await response.json();
+            const response = await fetch(
+                `${DB_URL}/usuarios.json?orderBy="email"&equalTo="${encodeURIComponent(email)}"`
+            );
 
-        let userId;
+            if (!response.ok) {
+                throw new Error("Error consultando Firebase: " + response.status);
+            }
 
-        if (usuarios && Object.keys(usuarios).length > 0) { // EL USUARIO YA EXISTE
-            
-            userId = Object.keys(usuarios)[0];
+            const usuarios = await response.json();
 
-            // ACTUALIZAR USERNAME
-            const updateResponse = await fetch(
-                `${DB_URL}/usuarios/${userId}.json`,
-                {
-                    method: 'PATCH',
+            if (usuarios && Object.keys(usuarios).length > 0) { // EL USUARIO YA EXISTE
+                
+                userId = Object.keys(usuarios)[0];
+
+                // ACTUALIZAR USERNAME
+                const updateResponse = await fetch(
+                    `${DB_URL}/usuarios/${userId}.json`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nickname: username
+                        })
+                    }
+                );
+
+                if (!updateResponse.ok) {
+                    throw new Error("Error actualizando el usuario");
+                }
+
+                console.log("Usuario actualizado correctamente")
+
+            } else { // REGISTRAR NUEVO USUARIO EN REALTIME DATABASE
+                const registerResponse = await fetch(`${DB_URL}/usuarios.json`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        email: email,
                         nickname: username
                     })
+                });
+
+                if (!registerResponse.ok) {
+                    throw new Error("Error guardando el usuario");
                 }
-            );
 
-            if (!updateResponse.ok) {
-                throw new Error("Error actualizando el usuario");
+                const data = await registerResponse.json();
+
+                userId = data.name;
             }
 
-            console.log("Usuario actualizado correctamente")
-
-        } else { // REGISTRAR NUEVO USUARIO EN REALTIME DATABASE
-            const registerResponse = await fetch(`${DB_URL}/usuarios.json`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    nickname: username
-                })
-            });
-
-            if (!registerResponse.ok) {
-                throw new Error("Error guardando el usuario");
-            }
-
-            const data = await registerResponse.json();
-
-            userId = data.name;
+            sessionStorage.setItem("user", userId); // GUARDAR ID EN SESSION STORAGE
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
         }
-
-        sessionStorage.setItem("user", userId); // GUARDAR ID EN SESSION STORAGE
-
-        console.log("Usuario registrado correctamente")
-        
-    } catch (error) {
-        console.error(error);
-    }
-});
+    });
+}
