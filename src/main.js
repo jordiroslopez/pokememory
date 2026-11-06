@@ -9,7 +9,24 @@ console.log(userId);
 
 if (userId) {
     registro.innerHTML = `
-        <h1>Bienvenido a PokeMemory</h1>
+        <div class="game-page">
+        <div id="derecha" class="seccion">
+          <div id="game-board">
+            <div id="form-cards">
+              <input id="cards-number" placeholder="Numero de cartas" type="number" min="0">
+            </div>
+            <button id="play-btn" type="button">Jugar</button>
+          </div>
+        </div>
+        <div id="izquierda">
+          <div id="seccion-logout">
+            <button type="submit">LOGOUT</button>
+          </div>
+          <div id="seccion-formulario" class="seccion">
+            <div class="instrucciones">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus harum, saepe ex aperiam voluptatem possimus laudantium exercitationem, asperiores quisquam nobis tempore doloremque vel.</div>
+          </div>
+        </div>
+      </div>
     `;
 } else {
     const form = document.getElementById("user-form");
