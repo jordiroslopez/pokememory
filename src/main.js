@@ -10,10 +10,10 @@ if (userId) {
         <div class="game-page">
         <div id="derecha" class="seccion">
           <div id="game-board">
-            <div id="form-cards">
-              <input id="cards-number" placeholder="Numero de cartas" type="number" min="0">
-            </div>
-            <button id="play-btn" type="button">Jugar</button>
+            <form id="game-form">
+              <input id="cards-number" name="cards-number" placeholder="Numero de cartas" type="number" min="0">
+              <button id="play-btn" type="button">Jugar</button>
+            </form>
           </div>
         </div>
         <div id="izquierda">
@@ -24,19 +24,59 @@ if (userId) {
           </div>
           <div id="seccion-formulario" class="seccion">
             <div class="instrucciones">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus harum, saepe ex aperiam voluptatem possimus laudantium exercitationem, asperiores quisquam nobis tempore doloremque vel.</div>
+            <div id="messageError"></div>
           </div>
         </div>
       </div>
     `;
     
-    const form = document.getElementById("logout-form");
+    const formLogout = document.getElementById("logout-form");
 
-    form.addEventListener('click', async (event) => {
+    formLogout.addEventListener('click', async (event) => {
         event.preventDefault();
 
+        // BORRAR USUARIO DE SESSIONSTORAGE Y REFRESCAR VENTANA
         if (event.target.id === "logout-btn") {
             sessionStorage.removeItem("user");
             window.location.reload();
+        }
+    })
+
+    const formCards = document.getElementById("game-form");
+    const messageError = document.getElementById("messageError");
+
+    formCards.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const data = new FormData(formCards);
+
+        if (event.target.id === "play-btn") {
+            const n_cards = Number(data.get("cards-number"));
+            console.log(n_cards);
+
+            // VERIFICAR QUE EL NÚMERO DE CARTAS ES VÁLIDO
+
+            if (!Number.isInteger(n_cards)) {
+                messageError.innerHTML = "El número de cartas debe ser entero.";
+                //console.error("El número de cartas debe ser entero.");
+                return false;
+            }
+
+            if (n_cards <= 0) {
+                messageError.innerHTML = "El número de cartas debe ser mayor que 0.";
+                //console.error("El número de cartas debe ser mayor que 0.");
+                return false;
+            }
+
+            if (n_cards % 2 !== 0) {
+                messageError.innerHTML = "El número de cartas debe ser par.";
+                //console.error("El número de cartas debe ser par.");
+                return false;
+            }
+
+            messageError.innerHTML = "";
+
+            // ------------------------------------------
         }
     })
 } else {

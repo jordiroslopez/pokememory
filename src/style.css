@@ -3,6 +3,7 @@
   --border: #7000ff;
   --bg-body: #101010;
   --bg-seccion: #180036;
+  --error: #ff0000;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   
   font: 18px/145% var(--sans);
@@ -79,6 +80,10 @@ button {
 
 #play-btn {
   width: 100px;
+}
+
+#messageError {
+  color: var(--error);
 }
 
 .game-page {
