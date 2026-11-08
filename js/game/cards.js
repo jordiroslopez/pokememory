@@ -1,9 +1,15 @@
 import { POKEBALL_PNG } from "../config/config.js";
 
+const ID_MAX = 100;
+
 let firstCard = null;
 let secondCard = null;
 let canSelect = true;
 let currentCards = 0;
+
+function randomNumber() {
+    return Math.floor((Math.random() * ID_MAX)+1);
+}
 
 export function generateCards(n_cards) {
     const board = document.getElementById("game-board");
@@ -12,9 +18,23 @@ export function generateCards(n_cards) {
 
     let cards = [];
 
+    // GENERAR ID CARTAS ALEATORIAS
+    let idValues = [];
+    for (let i = 0; i < n_cards/2; i++) {
+        let aux = randomNumber();
+
+        while (idValues.includes(aux)) {
+            idValues.pop();
+            aux = randomNumber();
+            idValues.push(aux);
+        }
+
+        idValues.push(aux);
+    }
+
     // GENERAR PAREJAS POKEMON
     for (let i = 0; i < n_cards / 2; i++) {
-        const pokemonId = i + 1;
+        const pokemonId = idValues[i];
 
         cards.push(pokemonId, pokemonId);
     }

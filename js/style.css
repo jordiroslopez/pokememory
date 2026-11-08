@@ -168,7 +168,7 @@ button {
 }
 
 .memory-card.flipped {
-  background-color: var(--secondary);
+  background-color: var(--color);
 }
 
 .game-page {

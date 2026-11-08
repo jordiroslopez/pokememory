@@ -46,14 +46,14 @@ export async function loadRanking(highlightId = null) {
                 visibleRecords = results.slice(0, TOP_RANKING);
             } else if (newIndex >= TOP_RANKING) {
                 visibleRecords = [
-                    ...results.slice(0, TOP_RANKING - 1),
+                    ...results.slice(0, TOP_RANKING),
                     null,
                     results[newIndex],
                     null
                 ];
             } else {
                 visibleRecords = [
-                    ...results.slice(0, TOP_RANKING - 1),
+                    ...results.slice(0, TOP_RANKING),
                     null
                 ];
             }
