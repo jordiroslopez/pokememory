@@ -1,8 +1,10 @@
 :root {
   --color: #ffffff;
-  --border: #7000ff;
+  --primary: #5000ff;
+  --secondary: #9443fe;
   --bg-body: #101010;
   --bg-seccion: #180036;
+  --border-color: #00ff00;
   --error: #ff0000;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   
@@ -17,7 +19,7 @@ body {
 button {
   border: 0px;
   color: var(--color);
-  background-color: var(--border);
+  background-color: var(--primary);
 }
 
 #registro {
@@ -32,9 +34,12 @@ button {
 }
 
 #derecha {
-  display: flex;
-  justify-content: center;
   width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 15px;
 }
 
 #seccion-formulario {
@@ -46,12 +51,21 @@ button {
   gap: 10px;
 }
 
-#game-board button {
-  border-radius: 20px;
-  height: 50px;
+#form-cards {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
 }
 
-#game-board input {
+#form-cards form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#form-cards button,
+#form-cards input {
   border-radius: 20px;
   height: 50px;
 }
@@ -82,8 +96,45 @@ button {
   width: 100px;
 }
 
-#messageError {
+#modal {
   color: var(--error);
+}
+
+#game-board {
+  display: none;
+  grid-template-columns: repeat(8, 100px);
+  gap: 10px;
+  justify-content: center;
+  align-content: center;
+  flex: 1;
+}
+
+#timer {
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  color: var(--color);
+  min-height: 50px;
+}
+
+.memory-card {
+    width: 100px;
+    height: 150px;
+    font-size: 5em;
+
+    background-image: url("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.memory-card.matched {
+  border: 7px solid var(--border-color);
+  background-color: #333;
+}
+
+.memory-card.flipped {
+  background-color: var(--secondary);
 }
 
 .game-page {
@@ -102,7 +153,7 @@ button {
 
 .seccion {
   background-color: var(--bg-seccion);
-  border: var(--border) 5px solid;
+  border: var(--primary) 5px solid;
   border-radius: 20px;
   box-sizing: border-box;
 }
