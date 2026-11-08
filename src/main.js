@@ -2,6 +2,7 @@ import './style.css'
 
 const DB_URL = "https://pokememory-64550-default-rtdb.europe-west1.firebasedatabase.app";
 const POKEBALL_PNG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
+const TOP_RANKING = 5;
 
 const registro = document.getElementById("registro");
 
@@ -12,6 +13,9 @@ let timerInterval = null;
 let firstCard = null;
 let secondCard = null;
 let canSelect = true;
+let currentCards = 0;
+let gameFinished = false;
+let newRecordId = null;
 
 // CONTADOR DE TIEMPO DESDE QUE INICAIA LA PARTIDA
 function timer() {
@@ -86,7 +90,6 @@ function detectCards() {
 
         // COMPROBAR SI LAS CARTAS SELECCIONADAS SON IGUALES
         if (firstCard.dataset.id === secondCard.dataset.id) {
-
             firstCard.classList.add("matched");
             secondCard.classList.add("matched");
 
@@ -94,7 +97,16 @@ function detectCards() {
             secondCard = null;
             canSelect = true;
 
+            // COMPROVAR SI S'HA COMPLETAT LA PARTIDA
+            const matchedCards = document.querySelectorAll(".memory-card.matched");
+
+            if (matchedCards.length === currentCards) {
+                console.log("Partida completada");
+                finishGame();
+            }
+
         } else { // MOSTRAR POKEBALL EN CARTA
+
             setTimeout(() => {
                 firstCard.style.backgroundImage = `url('${POKEBALL_PNG}')`;
                 secondCard.style.backgroundImage = `url('${POKEBALL_PNG}')`;
@@ -108,6 +120,170 @@ function detectCards() {
             }, 1000);
         }
     });
+}
+
+// FINALIZAR Y GUARDAR PARTIDA
+async function finishGame() {
+    if (gameFinished) return;
+
+    gameFinished = true;
+    clearInterval(timerInterval);
+
+    const totalTime = minutos * 60 + segundos;
+
+    try {
+        const response = await fetch(`${DB_URL}/ranking.json`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userId: userId,
+                time: totalTime,
+                cards: currentCards
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Error guardando el resultado");
+        }
+
+        const data = await response.json();
+        console.log("Resultado guardado:", data);
+
+        // IDENTIFICADOR DEL NUEVO REGISTRO
+        newRecordId = data.name;
+
+        // ACTUALIZAR RANKING
+        await loadRanking(newRecordId);
+
+    } catch (error) {
+        console.error("Error guardando la partida:", error);
+
+        document.getElementById("modal").textContent =
+            "No se ha podido guardar la partida.";
+    }
+}
+
+async function loadRanking(highlightId = null) {
+    const ranking = document.getElementById("ranking");
+
+    try {
+        // RECUPERAR PARTIDAS
+        const response = await fetch(`${DB_URL}/ranking.json`);
+
+        if (!response.ok) {
+            throw new Error("Error cargando el ranking");
+        }
+
+        const records = await response.json();
+
+        // RECUPERAR USUARIOS
+        const usersResponse = await fetch(`${DB_URL}/usuarios.json`);
+
+        if (!usersResponse.ok) {
+            throw new Error("Error cargando los usuarios");
+        }
+
+        const users = await usersResponse.json();
+
+        if (!records) {
+            ranking.innerHTML = "<p></p>";
+            return;
+        }
+
+        // CONVERTIR OBJETO A ARRAY
+        let results = Object.entries(records).map(([id, record]) => {
+            const user = users?.[record.userId];
+
+            return {
+                id: id,
+                username: user?.nickname ?? "Desconocido",
+                email: user?.email ?? "Desconocido",
+                time: Number(record.time),
+                cards: Number(record.cards)
+            };
+        });
+
+        // ORDENAR CARTAS (DESCENDIENE) Y TIEMPO (ASCENDENTE)
+        results.sort((a, b) => {
+            return b.cards - a.cards || a.time - b.time;
+        });
+
+        // DETERMINAR QUE REGISTRO MOSTRAR
+        let visibleRecords = [];
+
+        if (results.length <= TOP_RANKING) {
+            visibleRecords = results.map(record => record);
+        } else {
+            const newIndex = results.findIndex(
+                record => record.id === highlightId
+            );
+
+            if (newIndex >= 0 && newIndex < TOP_RANKING) {
+                // EL NUEVO REGISTRO ESTA ENTRE LOS 5 PRIMEROS
+                visibleRecords = results.slice(0, TOP_RANKING);
+            } else if (newIndex >= TOP_RANKING) {
+                // EL NUEVO REGISTRO ESTA FUERA DE LOS 5 PRIMEROS
+                visibleRecords = [
+                    ...results.slice(0, TOP_RANKING-1),
+                    null,
+                    results[newIndex],
+                    null
+                ];
+            } else {
+                // CARGAR RANKING SIN UN NUEVO REGISTRO
+                visibleRecords = [
+                    ...results.slice(0, TOP_RANKING-1),
+                    null
+                ];
+            }
+        }
+
+        // GENERAR TABLA HTML
+        ranking.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Username</th>
+                        <th>Mail</th>
+                        <th>Tiempos</th>
+                        <th>Cartas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${visibleRecords.map((record, index) => {
+
+                        if (record === null) {
+                            return `
+                                <tr>
+                                    <td colspan="5">...</td>
+                                </tr>
+                            `;
+                        }
+
+                        const position = results.indexOf(record) + 1;
+
+                        return `
+                            <tr class="${record.id === highlightId ? "highlight" : ""}">
+                                <td>${position}</td>
+                                <td>${record.username}</td>
+                                <td>${record.email}</td>
+                                <td>${Math.floor(record.time / 60)}m ${record.time % 60}s</td>
+                                <td>${record.cards}</td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+            </table>
+        `;
+
+    } catch (error) {
+        console.error("Error cargando el ranking:", error);
+
+        ranking.innerHTML = "Error cargando el ranking.";
+    }
 }
 
 if (userId) {
@@ -126,7 +302,7 @@ if (userId) {
                         placeholder="Cartas"
                         type="number"
                         min="2"
-                        max="24"
+                        max="18"
                     >
                     <button id="play-btn" type="button">Jugar</button>
                 </form>
@@ -139,7 +315,7 @@ if (userId) {
                 </form>
             </div>
             <div id="seccion-formulario" class="seccion">
-                <div class="instrucciones">RANKING</div>
+                <div id="ranking"></div>
                 <tag id="modal"></tag>
             </div>
         </div>
@@ -147,6 +323,7 @@ if (userId) {
     `;
 
     detectCards();
+    loadRanking();
     
     const formLogout = document.getElementById("logout-form");
 
@@ -188,14 +365,16 @@ if (userId) {
                 return;
             }
 
-            if (n_cards < 2 || n_cards > 24) {
-                modal.innerHTML = " El número de cartas debe ser entre 2 y 24."
+            if (n_cards < 2 || n_cards > 18) {
+                modal.innerHTML = " El número de cartas debe ser entre 2 y 18."
                 return;
             }
 
             modal.innerHTML = "";
 
-            // REINICIAR ESTADO DE LAS CARTAS
+            // CONFIGURAR PARTIDA
+            currentCards = n_cards;
+            gameFinished = false;
             firstCard = null;
             secondCard = null;
             canSelect = true;
