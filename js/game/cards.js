@@ -8,7 +8,7 @@ let canSelect = true;
 let currentCards = 0;
 
 function randomNumber() {
-    return Math.floor((Math.random() * ID_MAX)+1);
+    return Math.floor((Math.random() * ID_MAX)) + 1;
 }
 
 export function generateCards(n_cards) {
@@ -16,21 +16,20 @@ export function generateCards(n_cards) {
 
     currentCards = n_cards;
 
-    let cards = [];
+    let idValues = [];
 
     // GENERAR ID CARTAS ALEATORIAS
-    let idValues = [];
-    for (let i = 0; i < n_cards/2; i++) {
+    for (let i = 0; i < n_cards / 2; i++) {
         let aux = randomNumber();
 
         while (idValues.includes(aux)) {
-            idValues.pop();
             aux = randomNumber();
-            idValues.push(aux);
         }
 
         idValues.push(aux);
     }
+
+    let cards = [];
 
     // GENERAR PAREJAS POKEMON
     for (let i = 0; i < n_cards / 2; i++) {

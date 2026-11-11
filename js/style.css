@@ -18,10 +18,18 @@ body {
   margin: 0;
 }
 
+h1 {
+  color: white;
+}
+
 button {
   border: 0px;
   color: var(--color);
   background-color: var(--primary);
+}
+
+button:hover {
+  background-color: var(--secondary);
 }
 
 #registro {
@@ -104,7 +112,7 @@ button {
 
 #game-board {
   display: none;
-  grid-template-columns: repeat(6, 100px);
+  grid-template-columns: repeat(6, 5em);
   gap: 10px;
   justify-content: center;
   align-content: center;
@@ -151,9 +159,37 @@ button {
     font-weight: bold;
 }
 
+#registro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#user-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 3px;
+}
+
+.pantalla-registro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.titulo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 .memory-card {
-    width: 100px;
-    height: 150px;
+    width: 1em;
+    height: 1.5em;
     font-size: 5em;
 
     background-image: url("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png");
