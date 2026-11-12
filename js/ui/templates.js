@@ -2,7 +2,7 @@ export function renderGame(registro) {
 
     registro.innerHTML = `
         <div class="game-page">
-            <div id="derecha" class="seccion">
+            <div id="izquierda" class="seccion">
                 <div id="timer">0m 0s</div>
                 <div id="game-board"></div>
                 <div id="form-cards">
@@ -21,7 +21,7 @@ export function renderGame(registro) {
                     </form>
                 </div>
             </div>
-            <div id="izquierda">
+            <div id="derecha">
                 <div id="seccion-logout">
                     <form id="logout-form">
                         <button id="logout-btn" type="submit">LOGOUT</button>

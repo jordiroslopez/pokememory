@@ -9,7 +9,8 @@ export async function loginUser(username, email) {
 
     let userId;
 
-    if (usuarios && Object.keys(usuarios).length > 0) {
+    
+    if (usuarios && Object.keys(usuarios).length > 0) { // COMPROBAR SI EL USUARIO EXISTE
         // EL USUARIO YA EXISTE
         userId = Object.keys(usuarios)[0];
 
@@ -18,9 +19,7 @@ export async function loginUser(username, email) {
             nickname: username
         });
         
-    } else {
-
-        // REGISTRAR NUEVO USUARIO
+    } else { // REGISTRAR NUEVO USUARIO
         const data = await postData("usuarios", {
             email: email,
             nickname: username

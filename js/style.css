@@ -8,6 +8,7 @@
   --bg-seccion: #180036;
   --border-color: #00ff00;
   --error: #ff0000;
+  --bg-ranking: #ffea00;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   
   font: 18px/145% var(--sans);
@@ -36,20 +37,23 @@ button:hover {
   min-height: 100dvh;
 }
 
-#izquierda {
-  width: 35%;
+#derecha {
+  flex: 35;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-#derecha {
-  width: 65%;
+#izquierda {
+  flex: 65;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
   padding: 15px;
+  box-sizing: border-box;
 }
 
 #seccion-formulario {
@@ -95,7 +99,7 @@ button:hover {
   border-radius: 20px;
 }
 
-#derecha div {
+#izquierda div {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,7 +155,7 @@ button:hover {
 }
 
 #ranking tr.highlight {
-    background-color: var(--primary);
+    background-color: var(--bg-ranking);
     color: var(--color-text-ranking);
 }
 
@@ -198,20 +202,20 @@ button:hover {
     background-size: contain;
 }
 
-.memory-card.matched {
-  border: 7px solid var(--border-color);
-  background-color: var(--bg-color);
-}
-
 .memory-card.flipped {
   background-color: var(--color-text);
+}
+
+.memory-card.matched {
+  background-color: var(--border-color)
 }
 
 .game-page {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   gap: 10px;
   padding: 20px;
   box-sizing: border-box;

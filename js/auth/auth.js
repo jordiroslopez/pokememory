@@ -30,7 +30,7 @@ export function initializeLogout() {
     formLogout.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("user"); // BORRAR USER DE SESSIONSTORAGE
         window.location.reload();
     });
 }

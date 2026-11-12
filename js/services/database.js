@@ -1,5 +1,6 @@
 import { DB_URL } from "../config/config.js";
 
+// OBTENER DATOS FIREBASE
 export async function getData(path) {
     const [resource, query] = path.split("?");
     const url = `${DB_URL}/${resource}.json${query ? `?${query}` : ""}`;
@@ -12,6 +13,7 @@ export async function getData(path) {
     return await response.json();
 }
 
+// GENERAR NUEVOS DATOS EN FIREBASE
 export async function postData(path, data) {
     const response = await fetch(`${DB_URL}/${path}.json`, {
         method: "POST",
@@ -28,6 +30,7 @@ export async function postData(path, data) {
     return await response.json();
 }
 
+// ACTUALIZAR DATOS EN FIREBASE
 export async function patchData(path, data) {
     const response = await fetch(`${DB_URL}/${path}.json`, {
         method: "PATCH",
