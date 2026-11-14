@@ -26,9 +26,6 @@ En el siguiente enlace puedes ver un vídeo explicativo del funcionamiento y des
 - Generación aleatoria de parejas de Pokémon.
 - Identificadores de Pokémon únicos entre parejas.
 - Imágenes obtenidas de PokéAPI.
-- Animación de giro 3D con dos caras independientes:
-  - Cara frontal: Poké Ball.
-  - Cara trasera: Pokémon.
 - Detección de parejas coincidentes.
 - Resaltado de las parejas encontradas.
 - Temporizador que registra el tiempo empleado.
@@ -183,7 +180,6 @@ Este proyecto forma parte de una práctica de JavaScript y tiene como objetivo a
 - Consumo de APIs externas.
 - Gestión de sesiones mediante `sessionStorage`.
 - Temporizadores con `setInterval`.
-- Animaciones y transformaciones CSS.
 - Almacenamiento de datos en Firebase Realtime Database.
 
 ---
